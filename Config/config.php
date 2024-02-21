@@ -17,9 +17,9 @@ return [
             ["path" => "/index2", "title" => "Dashboard v2", "icon" => "far fa-circle", "slug" => "",  "children" => []],
             ["path" => "/index3", "title" => "Dashboard v3", "icon" => "far fa-circle", "slug" => "",  "children" => []],
         ]],
-        ["path" => "/market", "title" => "应用管理", "icon" => "fab fa-microsoft", "slug" => "",  "children" => [
-            ["path" => "", "title" => "应用市场", "icon" => "far fa-circle", "slug" => "",  "children" => []],
-            ["path" => "/installed", "title" => "安装管理", "icon" => "far fa-circle", "slug" => "",  "children" => []],
+        ["path" => "", "title" => "应用管理", "icon" => "fab fa-microsoft", "slug" => "",  "children" => [
+            ["path" => "/module-market", "title" => "应用市场", "icon" => "far fa-circle", "slug" => "",  "children" => []],
+            ["path" => "/module-installed", "title" => "安装管理", "icon" => "far fa-circle", "slug" => "",  "children" => []],
         ]],
         ["path" => "/user", "title" => "用户管理", "icon" => "fas fa-users", "slug" => "", "children" => []],
         ["path" => "/config", "title" => "系统管理", "icon" => "fab fa-windows", "slug" => "", "children" => [

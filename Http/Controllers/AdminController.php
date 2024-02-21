@@ -115,4 +115,12 @@ trait ViewTrait
     {
         return view('admin::config.index', ['module_config' => Config::get('admin')]);
     }
+    function view_module_market(Request $request)
+    {
+        return view('admin::market.index', ['module_config' => Config::get('admin')]);
+    }
+    function view_module_installed(Request $request)
+    {
+        return view('admin::market.index', ['module_config' => Config::get('admin')]);
+    }
 }
