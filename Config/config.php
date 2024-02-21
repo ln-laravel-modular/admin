@@ -9,6 +9,8 @@ return [
     "component" => "",
     "layout" => "adminlte",
     "theme" => "default",
+    'navbar' => [],
+    'sidebar' => [],
     "menu" => [
         ["path" => "", "title" => "总览面板", "icon" => "fas fa-tachometer-alt", "slug" => "",  "children" => [
             ["path" => "", "title" => "Dashboard v1", "icon" => "far fa-circle", "slug" => "",  "children" => []],

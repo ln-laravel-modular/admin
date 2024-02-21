@@ -97,13 +97,19 @@ trait ViewTrait
     }
     function view_index(Request $request)
     {
-        if (!Auth::check()) {
-            return  redirect("/admin/login");
-        }
+        // if (!Auth::check()) {
+        //     return  redirect("/admin/login");
+        // }
         return view('admin::index', ['module_config' => Config::get('admin')]);
     }
-
-
+    function view_index2(Request $request)
+    {
+        return view('admin::index2', ['module_config' => Config::get('admin')]);
+    }
+    function view_index3(Request $request)
+    {
+        return view('admin::index3', ['module_config' => Config::get('admin')]);
+    }
 
     function view_config(Request $request)
     {
