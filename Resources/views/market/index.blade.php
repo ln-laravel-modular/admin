@@ -78,6 +78,20 @@
       <div class="row">
         <!-- left column -->
         <div class="col-md-6">
+          <div class="card card-info">
+            <div class="card-header">
+              <h3 class="card-title">Module Example</h3>
+            </div>
+
+            <div class="list-group list-group-flush">
+              <a href="/admin/module-market/temp" class="list-group-item list-group-item-action"> Temp </a>
+              <a href="/admin/module-market/admin" class="list-group-item list-group-item-action"> Admin </a>
+              <a href="/admin/module-market/adminlte" class="list-group-item list-group-item-action"> AdminLTE </a>
+              <a href="/admin/module-market/webstack" class="list-group-item list-group-item-action"> WebStack </a>
+            </div>
+
+          </div>
+
           <!-- general form elements -->
           <div class="card card-primary">
             <div class="card-header">
@@ -142,7 +156,8 @@
               </div>
               <div class="form-group">
                 <label for="exampleInputRounded0">Flat <code>.rounded-0</code></label>
-                <input type="text" class="form-control rounded-0" id="exampleInputRounded0" placeholder=".rounded-0">
+                <input type="text" class="form-control rounded-0" id="exampleInputRounded0"
+                  placeholder=".rounded-0">
               </div>
               <h4>Custom Select</h4>
               <div class="form-group">

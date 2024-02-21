@@ -20,6 +20,10 @@ Route::prefix('admin')->group(function () {
     Route::get('/forget-password', 'AdminController@view_forget_password');
     Route::get('/config', 'AdminController@view_config');
 
-    Route::get('/module-market', 'AdminController@view_module_market');
+    Route::prefix('module-market')->group(function () {
+        Route::get('/', 'AdminController@view_module_market');
+        Route::get('/{slug}', 'AdminController@view_module_market_intro');
+        Route::get('/{slug}/install', 'AdminController@view_module_market_install');
+    });
     Route::get('/module-installed', 'AdminController@view_module_installed');
 });

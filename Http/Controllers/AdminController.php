@@ -119,6 +119,21 @@ trait ViewTrait
     {
         return view('admin::market.index', ['module_config' => Config::get('admin')]);
     }
+    function view_module_market_intro(Request $request, $slug)
+    {
+        return view('admin::market.module-intro', [
+            'module_config' => Config::get('admin'),
+            'slug' => $slug,
+        ]);
+    }
+    function view_module_market_install(Request $request, $slug)
+    {
+        $_GET['step'] = $_GET['step'] ?? 1;
+        return view('admin::market.module-install', [
+            'module_config' => Config::get('admin'),
+            'slug' => $slug,
+        ]);
+    }
     function view_module_installed(Request $request)
     {
         return view('admin::market.index', ['module_config' => Config::get('admin')]);
