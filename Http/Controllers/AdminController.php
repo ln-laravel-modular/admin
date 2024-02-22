@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Config;
 
 class AdminController extends Controller
 {
-    use ViewTrait;
+    use ApiTrait, ViewTrait;
     /**
      * Display a listing of the resource.
      * @return Renderable
@@ -80,7 +80,15 @@ class AdminController extends Controller
         //
     }
 }
-
+trait ApiTrait
+{
+    function api_login(Request $request)
+    {
+    }
+    function api_logout(Request $request)
+    {
+    }
+}
 trait ViewTrait
 {
     function view_register(Request $request)
@@ -97,9 +105,7 @@ trait ViewTrait
     }
     function view_index(Request $request)
     {
-        // if (!Auth::check()) {
-        //     return  redirect("/admin/login");
-        // }
+        if (!Auth::check()) return redirect("/admin/login");
         return view('admin::index', ['module_config' => Config::get('admin')]);
     }
     function view_index2(Request $request)

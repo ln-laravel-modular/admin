@@ -4,6 +4,7 @@ return [
     'name' => 'Admin',
     "slug" => "admin",
     'title' => 'Laravel Modular',
+    'db_prefix' => '',
     "key" => "",
     "md5" => "",
     "component" => "",

@@ -1,5 +1,9 @@
 <?php
 
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,10 +17,16 @@
 
 Route::prefix('admin')->group(function () {
     Route::get('/', 'AdminController@view_index');
+    Route::post('/', function (Request $request) {
+        $user = new User(['name' => 'guest', 'password' => 'guest', 'email' => 'guest@guest']);
+        Auth::login($user, true);
+        return redirect('/admin');
+    });
     Route::get('/index2', 'AdminController@view_index2');
     Route::get('/index3', 'AdminController@view_index3');
     Route::get('/register', 'AdminController@view_register');
     Route::get('/login', 'AdminController@view_login');
+
     Route::get('/forget-password', 'AdminController@view_forget_password');
     Route::get('/config', 'AdminController@view_config');
 
