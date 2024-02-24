@@ -1,4 +1,4 @@
-@extends($module_config['layout'] . '::_layouts.main')
+@extends($module_config['layout'] . '::layouts.main')
 
 @section('content')
   <section class="content-header">
