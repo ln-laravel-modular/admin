@@ -62,13 +62,20 @@
             </div>
             <!-- /.card-body -->
             <div class="card-footer clearfix">
-              <ul class="pagination m-0 float-right">
-                <li class="page-item"><a class="page-link" href="#">«</a></li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">»</a></li>
-              </ul>
+              <div class="card-footer__left float-left">
+                <ul class="pagination m-0">
+                  <li class="page-item"><a class="page-link" href="#">«</a></li>
+                  <li class="page-item"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item"><a class="page-link" href="#">»</a></li>
+                </ul>
+              </div>
+              <div class="card-footer__right float-right">
+                <a type="button" class="btn btn-secondary" href="/admin/webstack/metas/insert">新增</a>
+                <button type="button" class="btn btn-secondary">Middle</button>
+                <button type="button" class="btn btn-secondary">Right</button>
+              </div>
             </div>
             <!-- /.card-footer -->
           </div>

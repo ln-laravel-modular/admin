@@ -32,15 +32,15 @@ Route::prefix(ModuleHelper::current_config('web.prefix'))->group(function () {
     Route::get('/forget-password', 'AdminController@view_forget_password');
     Route::get('/config', 'AdminController@view_config');
 
-    Route::prefix('module-market')->group(function () {
-        Route::get('/', 'AdminController@view_module_market');
-        Route::get('/{slug}', 'AdminController@view_module_market_intro');
-        Route::get('/{slug}/install', 'AdminController@view_module_market_install');
-    });
-    Route::get('/module-installed', 'AdminController@view_module_installed');
+    // Route::prefix('module-market')->group(function () {
+    //     Route::get('/', 'AdminController@view_module_market');
+    //     Route::get('/{slug}', 'AdminController@view_module_market_intro');
+    //     Route::get('/{slug}/install', 'AdminController@view_module_market_install');
+    // });
+    // Route::get('/module-installed', 'AdminController@view_module_installed');
 
     Route::prefix('{module}')->group(function () {
-        Route::prefix('{table}')->where(['table' => '(metas|contents|links)'])->group(function () {
+        Route::prefix('{table}')->where(['table' => '(metas|contents|comments|links)'])->group(function () {
             Route::get('/insert', function (Request $request, $module, $table) {
                 return AdminController::view('admin::modules.' . substr($table, 0, -1));
             });
@@ -53,6 +53,15 @@ Route::prefix(ModuleHelper::current_config('web.prefix'))->group(function () {
             Route::get('/{id?}', function (Request $request, $module, $table, $cid = null) {
                 return AdminController::view('admin::modules.' . $table);
             });
+        });
+        Route::get('/options', function (Request $request, $module) {
+            return AdminController::view('admin::modules.options');
+        });
+        Route::get('/themes', function (Request $request, $module) {
+            return AdminController::view('admin::modules.themes');
+        });
+        Route::get('/extras', function (Request $request, $module) {
+            return AdminController::view('admin::modules.extras');
         });
     });
     // Route::get('/{module}/contents/{parentCid?}', function (Request $request, $module, $parentCid = null) {
@@ -77,13 +86,5 @@ Route::prefix(ModuleHelper::current_config('web.prefix'))->group(function () {
     // Route::get('/{module}/link/{lid?}', function (Request $request, $module, $lid) {
     //     return AdminController::view('admin::modules.link');
     // });
-    // Route::get('/{module}/options', function (Request $request, $module) {
-    //     return AdminController::view('admin::modules.options');
-    // });
-    // Route::get('/{module}/themes', function (Request $request, $module) {
-    //     return AdminController::view('admin::modules.themes');
-    // });
-    // Route::get('/{module}/extras', function (Request $request, $module) {
-    //     return AdminController::view('admin::modules.extras');
-    // });
+
 });

@@ -130,7 +130,7 @@ class AdminController extends \App\Http\Controllers\Controller
         [$module_config['menu'], $module_config['menu_actives']] = self::getSidebarMenu(null, ['path' => '/admin']);
         // var_dump(request()->path());
         // var_dump(request()->route());
-        var_dump($module_config['menu_actives']);
+        // var_dump($module_config['menu_actives']);
         return view($view, array_merge(['module_config' => $module_config], $data, $mergeData));
     }
 }
