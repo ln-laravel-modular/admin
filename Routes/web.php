@@ -4,6 +4,7 @@ use App\Support\Helpers\ModuleHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Modules\Admin\Http\Controllers\AdminController;
 
 /*
@@ -17,7 +18,7 @@ use Modules\Admin\Http\Controllers\AdminController;
 |
 */
 
-Route::prefix(ModuleHelper::current_config('web.prefix'))->group(function () {
+Route::prefix(\App\Support\Helpers\ModuleHelper::current_config('web.prefix'))->group(function () {
     Route::get('/', 'AdminController@view_index');
     Route::post('/', function (Request $request) {
         // $user = new User(['name' => 'guest', 'password' => 'guest', 'email' => 'guest@guest']);
@@ -31,6 +32,15 @@ Route::prefix(ModuleHelper::current_config('web.prefix'))->group(function () {
 
     Route::get('/forget-password', 'AdminController@view_forget_password');
     Route::get('/config', 'AdminController@view_config');
+    Route::prefix('system')->group(function () {
+        Route::get('/artisan', function (Request $request) {
+            $kernel = app()->make(Illuminate\Contracts\Console\Kernel::class);
+            $status = '';
+            $kernel->terminate('module:make temp1', $status);
+            var_dump($kernel);
+            var_dump($status);
+        });
+    });
 
     // Route::prefix('module-market')->group(function () {
     //     Route::get('/', 'AdminController@view_module_market');
@@ -39,31 +49,49 @@ Route::prefix(ModuleHelper::current_config('web.prefix'))->group(function () {
     // });
     // Route::get('/module-installed', 'AdminController@view_module_installed');
 
-    Route::prefix('{module}')->group(function () {
-        Route::prefix('{table}')->where(['table' => '(metas|contents|comments|links)'])->group(function () {
-            Route::get('/insert', function (Request $request, $module, $table) {
-                return AdminController::view('admin::modules.' . substr($table, 0, -1));
-            });
-            Route::get('/update/{id}', function (Request $request, $module, $table, $cid) {
-                return AdminController::view('admin::modules.' . substr($table, 0, -1));
-            });
-            Route::get('/select/{id}', function (Request $request, $module, $table, $cid) {
-                return AdminController::view('admin::modules.' . substr($table, 0, -1));
-            });
-            Route::get('/{id?}', function (Request $request, $module, $table, $cid = null) {
-                return AdminController::view('admin::modules.' . $table);
-            });
-        });
-        Route::get('/options', function (Request $request, $module) {
-            return AdminController::view('admin::modules.options');
-        });
-        Route::get('/themes', function (Request $request, $module) {
-            return AdminController::view('admin::modules.themes');
-        });
-        Route::get('/extras', function (Request $request, $module) {
-            return AdminController::view('admin::modules.extras');
-        });
-    });
+    // Route::prefix('{module}')->group(function () {
+    //     Route::prefix('{table}')->where(['table' => '(metas|contents|comments|links)'])->group(function () {
+    //         Route::get('/insert', function (Request $request, $module, $table) {
+    //             $return = [
+    //                 'view' => 'admin::admin.modules.' . substr($table, 0, -1),
+    //             ];
+    //             return AdminController::view($return['view'], $return);
+    //         });
+
+    //         Route::get('/{id}', function (Request $request, $module, $table, $id) {
+    //             $return = [
+    //                 'view' => 'admin::admin.modules.' . substr($table, 0, -1),
+    //                 'readonly' => true,
+    //             ];
+    //             $return['detail'] = DB::table('video_contents')->where('cid', $id)->first();
+    //             return AdminController::view($return['view'], $return);
+    //         });
+    //         Route::get('', function (Request $request, $module, $table, $id = null) {
+    //             $return = [
+    //                 'view' => 'admin::admin.modules.' . $table,
+    //                 'readonly' => true,
+    //             ];
+
+    //             $return['paginator'] = DB::table('video_contents')->paginate(15);
+    //             return AdminController::view($return['view'], $return);
+    //         });
+    //     });
+    //     Route::get('/options', function (Request $request, $module) {
+    //         return AdminController::view('admin::admin.modules.options');
+    //     });
+    //     Route::get('/themes', function (Request $request, $module) {
+    //         return AdminController::view('admin::admin.modules.themes');
+    //     });
+    //     Route::get('/extras', function (Request $request, $module) {
+    //         return AdminController::view('admin::admin.modules.extras');
+    //     });
+    // });
+    // Route::get('/update/{id}', function (Request $request, $module, $table, $id) {
+    //     $return = [
+    //         'view' => 'admin::admin.modules.' . substr($table, 0, -1),
+    //     ];
+    //     return AdminController::view($return['view'], $return);
+    // });
     // Route::get('/{module}/contents/{parentCid?}', function (Request $request, $module, $parentCid = null) {
     //     return AdminController::view('admin::modules.contents');
     // });

@@ -174,7 +174,7 @@ trait ViewTrait
 
     function view_config(Request $request)
     {
-        return self::view('admin::config.index');
+        return self::view('admin::admin.config.index');
     }
     function view_module_market(Request $request)
     {
