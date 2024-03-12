@@ -10,29 +10,34 @@
             <div class="card-header">
               <h3 class="card-title">Fixed Header Table</h3>
 
-              <div class="card-tools">
-                <div class="input-group input-group-sm" style="width: 150px;">
-                  <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
-
-                  <div class="input-group-append">
-                    <button type="submit" class="btn btn-default">
-                      <i class="fas fa-search"></i>
-                    </button>
-                  </div>
+              <form class="form-inline card-tools float-right">
+                <div class="form-group mr-1">
+                  <input type="text" name="title" class="form-control form-control-sm" placeholder="Title">
                 </div>
-              </div>
+                <div class="form-group mr-1">
+                  <select class="form-control form-control-sm" name="type">
+                    <option selected>Type...</option>
+                    <option>...</option>
+                  </select>
+                </div>
+
+                <button type="submit" class="btn btn-sm btn-default">
+                  <i class="fas fa-search"></i>
+                </button>
+
+              </form>
             </div>
             <!-- /.card-header -->
-            <div class="card-body table-responsive p-0" style="height: calc(100vh - 311px);;">
-              <table class="table table-striped table-hover table-head-fixed text-nowrap">
+            <div class="card-body table-responsive p-0" style="height: calc(100vh - 321px);">
+              <table class="table table-sm table-striped table-hover table-head-fixed text-nowrap">
                 <thead>
                   <tr>
                     <th width="14px">#</th>
                     <th>ID</th>
-                    <th>Name</th>
-                    <th>Date</th>
+                    <th>Title</th>
                     <th>Status</th>
-                    <th>Action</th>
+                    <th>Created</th>
+                    <th>Updated</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -40,20 +45,14 @@
                     <tr>
                       <td>
                         <div class="form-check">
-                          <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                          <input class="form-check-input" type="checkbox" value="{{ $content->cid }}">
                         </div>
                       </td>
-                      <td>{{ $content->cid }}</td>
-                      <td><a class="" href="contents/{{ $content->cid }}">{{ $content->title }}</a></td>
-                      <td>{{ $content->updated_at }}</td>
+                      <td><a class="" href="contents/{{ $content->cid }}">{{ $content->cid }}</a></td>
+                      <td>{{ $content->title }}</td>
                       <td>{{ $content->status }}</td>
-                      <td style="padding: 0.5rem 0.75rem;">
-                        <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-                          <button type="button" class="btn btn-secondary">编辑</button>
-                          <button type="button" class="btn btn-secondary">Middle</button>
-                          <button type="button" class="btn btn-secondary">Right</button>
-                        </div>
-                      </td>
+                      <td>{{ $content->created_at }}</td>
+                      <td>{{ $content->updated_at }}</td>
                     </tr>
                   @endforeach
                 </tbody>
@@ -63,17 +62,25 @@
             <!-- /.card-body -->
             <div class="card-footer clearfix">
               <div class="card-footer__left float-left">
-                <a type="button" class="btn btn-sm btn-secondary" href="/admin/note/contents/insert">新增</a>
-                <button type="button" class="btn btn-sm btn-secondary">Middle</button>
+                <a type="button" class="btn btn-sm btn-info" href="/admin/note/contents/insert">新增</a>
+                <button type="button" class="btn btn-sm btn-danger">删除</button>
                 <button type="button" class="btn btn-sm btn-secondary">Right</button>
               </div>
               <div class="card-footer__right float-right">
                 <ul class="pagination m-0">
-                  <li class="page-item"><a class="page-link" href="{{ $paginator->previousPageUrl() }}">«</a></li>
+                  <li class="page-item">
+                    <a class="page-link" href="{{ $paginator->previousPageUrl() }}">
+                      <i class="fas fa-angles-left"></i>
+                    </a>
+                  </li>
                   <li class="page-item"><a class="page-link" href="#">1</a></li>
                   <li class="page-item"><a class="page-link" href="#">2</a></li>
                   <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item"><a class="page-link" href="{{ $paginator->nextPageUrl() }}">»</a></li>
+                  <li class="page-item">
+                    <a class="page-link" href="{{ $paginator->nextPageUrl() }}">
+                      <i class="fas fa-angles-right"></i>
+                    </a>
+                  </li>
                 </ul>
               </div>
             </div>

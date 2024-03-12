@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Modules\Admin\Http\Controllers\AdminController;
+use Nwidart\Modules\Laravel\Module;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +43,23 @@ Route::prefix(\App\Support\Helpers\ModuleHelper::current_config('web.prefix'))->
         });
     });
 
+    /**
+     * TODO 根据模块配置自动
+     */
+    Route::prefix('{module}')
+        ->where(['module' => '(' . implode('|', array_filter(array_values(Module::allConfig('web.prefix')), function ($value) {
+            return $value !== strtolower(Module::current());
+        })) . ')'])
+        ->group(function () {
+            Route::prefix('{table}')->where(['table' => '(metas|contents|comments|links)'])->group(function () {
+                Route::get('', 'AdminController@view_admin_modules_select_list');
+
+                Route::match(['get', 'post'], '/insert', 'AdminController@view_admin_modules_insert_item');
+
+                Route::match(['get', 'post'], '/{id}', 'AdminController@view_admin_modules_select_item')->where(['id' => '[0-9]+']);
+            });
+            Route::match(['get', 'post'], '/config', 'AdminController@view_admin_modules_config');
+        });
     // Route::prefix('module-market')->group(function () {
     //     Route::get('/', 'AdminController@view_module_market');
     //     Route::get('/{slug}', 'AdminController@view_module_market_intro');

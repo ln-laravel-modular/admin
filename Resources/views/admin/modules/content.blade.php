@@ -21,6 +21,10 @@
               <label>Slug</label>
               <input type="text" class="form-control" name='slug' value="{{ $detail->slug }}">
             </div>
+            <div class="form-group">
+              <label>Text</label>
+              <textarea class="form-control" name='text' rows="3">{{ $detail->text }}</textarea>
+            </div>
           </div>
           <!-- /.card-body -->
 
