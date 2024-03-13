@@ -1,1 +1,1 @@
-@extends($module_config['layout'] . '::examples.login', ['action' => '/admin'])
+@extends($moduleConfig['layout'] . '::examples.login', ['action' => '/admin'])

@@ -99,19 +99,23 @@ class AdminController extends \App\Http\Controllers\Controller
         $path = '/' . request()->path();
         // 当前路由正则
         $regex = request()->route()->compiled->getRegex();
-
-        // var_dump([$path, $uri]);
         foreach ($menu as $index => &$item) {
-            // unset($item['active']);
             // 重置激活状态
             $item['active'] = false;
             $item['index'] = isset($menu['index']) ? ($menu['index'] . '-' . $index) : "$index";
             $item['path'] = isset($parent['path']) ? ($parent['path'] . $item['path']) :  $item['path'];
-
-            // var_dump([$item['path'], $path, $regex, preg_match($regex, $item['path'])]);
+            // 精准匹配
+            if ($path == $item['path']) {
+                $item['active'] = true;
+                array_unshift($actives, $item);
+            }
+        }
+        // 先精准匹配，然后模糊匹配
+        // var_dump([$path, $uri]);
+        foreach ($menu as $index => &$item) {
             // 判断当前路由地址是否以该地址开头
             // if(preg_match('/^' . str_replace('/', '\/', $item['path']) . '*/', $path));
-            if ($path == $item['path'] || (preg_match($regex, $item['path']) && substr($path, 0, strlen($parent['path'])) == $parent['path'])) {
+            if (sizeof($actives) == 0 && (preg_match($regex, $item['path']) && substr($path, 0, strlen($parent['path'])) == $parent['path'])) {
                 $item['active'] = true;
                 array_unshift($actives, $item);
                 // dump($regex, $parent['path'], $item['path']);
@@ -135,16 +139,16 @@ class AdminController extends \App\Http\Controllers\Controller
         return [$menu, $actives];
     }
 
-    public static function view($view = null, $data = [], $mergeData = [])
+    public function view($view = null, $data = [], $mergeData = [])
     {
         // var_dump($this->getSidebarMenu());
-        $module_config = Config::get('admin');
-        [$module_config['menu'], $module_config['menu_actives']] = self::getSidebarMenu(null, ['path' => '/admin']);
+        $config = Module::currentConfig();
+        [$config['menu'], $config['menu_actives']] = self::getSidebarMenu(null, ['path' => '/admin']);
         // var_dump(request()->path());
         // var_dump(request()->route());
         // var_dump($module_config['menu']);
         // dump($module_config['menu']);
-        return view($view, array_merge(['module_config' => $module_config], $data, $mergeData));
+        return parent::view($view, array_merge(['config' => $config], $data, $mergeData));
     }
 }
 trait ApiTrait
@@ -235,127 +239,149 @@ trait ViewWebTrait
 
 trait ViewAdminTrait
 {
+    // 通用模块数据新增视图
     function view_admin_modules_insert_item(Request $request, $module, $table)
     {
         $return = [
             'view' => 'admin::admin.modules.' . substr($table, 0, -1),
-            'entities' => Module::currentConfig('entities', $module),
+            'moduleEntities' => Module::currentConfig('entities', $module, true),
         ];
-        foreach ($return['entities'] as $entity) {
+        // var_dump($return);
+        foreach ($return['moduleEntities'] as $entity) {
             if (strtolower(basename($entity)) === strtolower($module . substr($table, 0, -1))) {
-                $return['entity'] = $entity;
+                $return['moduleEntity'] = $entity;
                 break;
             }
         }
-        if (empty($return['entity'])) abort(404);
-        $return['detail'] = new $return['entity'];
+        if (empty($return['moduleEntity'])) abort(404);
+        $return['ModuleTableDetail'] = new $return['moduleEntity'];
         if ($request->method() == 'POST') {
-            $return['detail']->fill($request->input());
-            $return['detail']->save();
-            $id = $return['detail']->{$return['detail']->getKeyName()};
+            $return['ModuleTableDetail']->fill($request->input());
+            $return['ModuleTableDetail']->save();
+            $id = $return['ModuleTableDetail']->{$return['detail']->getKeyName()};
             return redirect("/admin/" . $module . "/" . $table . '/' . $id);
         }
 
         return self::view($return['view'], $return);
     }
-    //
+    // 通用模块数据详情视图
     function view_admin_modules_select_item(Request $request, $module, $table, $id)
     {
         $return = [
             'view' => 'admin::admin.modules.' . substr($table, 0, -1),
-            'entities' => Module::currentConfig('entities', $module),
+            'moduleEntities' => Module::currentConfig('entities', $module, 'files'),
         ];
-        foreach ($return['entities'] as $entity) {
+        foreach ($return['moduleEntities'] as $entity) {
             if (strtolower(basename($entity)) === strtolower($module . substr($table, 0, -1))) {
-                $return['entity'] = $entity;
+                $return['moduleEntity'] = $entity;
                 break;
             }
         }
-        if (empty($return['entity'])) abort(404);
-        $return['detail'] =  $return['entity']::find($id);
+        if (empty($return['moduleEntity'])) abort(404);
+        $return['ModuleTableDetail'] =  $return['entity']::find($id);
         if ($request->method() == 'POST') {
-            $return['detail']->fill($request->input());
-            $return['detail']->save();
+            $return['ModuleTableDetail']->fill($request->input());
+            $return['ModuleTableDetail']->save();
         }
         return self::view($return['view'], $return);
     }
-    //
+    // 通用模块数据查询视图
     function view_admin_modules_select_list(Request $request, $module, $table)
     {
 
         $return = [
             'view' => 'admin::admin.modules.' . $table,
-            'entities' => Module::currentConfig('entities', $module),
+            'moduleEntities' => Module::currentConfig('entities', $module, 'files'),
         ];
-        foreach ($return['entities'] as $entity) {
+        foreach ($return['moduleEntities'] as $entity) {
             if (strtolower(basename($entity)) === strtolower($module . substr($table, 0, -1))) {
-                $return['entity'] = $entity;
+                $return['moduleEntity'] = $entity;
                 break;
             }
         }
-        if (empty($return['entity'])) abort(404);
-        $return['paginator'] = $return['entity']::paginate(15);
+        // var_dump($return);
+        if (empty($return['moduleEntity'])) abort(404);
+        $return['moduleTablePaginator'] = $return['moduleEntity']::paginate(15);
         return self::view($return['view'], $return);
     }
 
-    // TODO:
-    function view_admin_modules_config(Request $request, $module)
+    // TODO:通用模块参数配置视图
+    function view_admin_modules_config(Request $request, $module = null)
     {
+        if (empty($module)) $module = Module::current();
         $return = [
-            'prefix' => '',
-            '$request' => $request->all(),
-            'files' => app('files')->allFiles('modules\\' . Module::currentConfig('name', $module)),
+            // 'prefix' => '',
+            'request' => $request->all(),
+            // 'files' => app('files')->allFiles('modules\\' . Module::currentConfig('name', $module)),
             'view' => 'admin::admin.modules.config',
-            'config' => Module::currentConfig(null, $module),
+            'moduleConfig' => Module::currentConfig(null, $module, 'files'),
             'structure' => [],
         ];
-        if ($request->method() == 'POST') {
-            var_dump($request->input());
-            var_dump($request->all());
+        try {
+            // var_dump($test);
+            if ($request->method() == 'POST') {
+                // var_dump($request->input());
 
-            if (in_array($request->input('_target'), array_keys(config('modules.config.update-keys')))) {
-                foreach (config('modules.config.update-keys.' . $request->input('_target')) as $key) {
-                    $return['config'][$key] = $request->input($key, Module::currentConfig($key));
+                if (in_array($request->input('_target'), array_keys(config('modules.config.update-keys')))) {
+                    foreach (config('modules.config.update-keys.' . $request->input('_target')) as $key) {
+                        $return['moduleConfig'][$key] = $request->input($key, Module::currentConfig($key, $module));
+                    }
                 }
+
+                // if (in_array($request->input('_target'), ['make-model'])) {
+                //     Artisan::call('module:' . $request->input('_target'),  [
+                //         'module' => Module::currentConfig('name', $module),
+                //         'command' => $request->input('command'),
+                //         'model' => $request->input('model'),
+                //     ]);
+                //     var_dump(Module::setCurrentConfig(null, $return['config'], $module));
+                // }
+                // switch ($request->input('_target')) {
+                //     case 'make-model':
+                //
+                //         // $res = new \Nwidart\Modules\Commands\ModelMakeCommand;
+                //         // var_dump($res->handle('ToDoMeta ToDo'));
+                //         Artisan::call('module:make-model', [
+                //             'model' => "ToDoMeta",
+                //             'module' => "ToDo"
+                //         ]);
+                //         break;
+                //     default:
+                //         break;
+                // }
+                Module::setCurrentConfig(null, $return['moduleConfig'], $module);
+                $return['alert'] = ['type' => 'success', 'message' => 'Update config successfully!'];
             }
 
-            // if (in_array($request->input('_target'), ['make-model'])) {
-            //     Artisan::call('module:' . $request->input('_target'),  [
-            //         'module' => Module::currentConfig('name', $module),
-            //         'command' => $request->input('command'),
-            //         'model' => $request->input('model'),
-            //     ]);
-            //     var_dump(Module::setCurrentConfig(null, $return['config'], $module));
+
+
+            // foreach ($return['files'] as $file) {
+            //     foreach (config('modules.config.files') ?? [] as $key => $path) {
+            //         if (!isset($return[$key])) $return[$key] = [];
+            //         if (substr($file->getRelativePathName(), 0, strlen($path)) == $path) {
+            //             array_push($return[$key], $file);
+            //             break;
+            //         }
+            //     }
             // }
-            // switch ($request->input('_target')) {
-            //     case 'make-model':
-            //
-            //         // $res = new \Nwidart\Modules\Commands\ModelMakeCommand;
-            //         // var_dump($res->handle('ToDoMeta ToDo'));
-            //         Artisan::call('module:make-model', [
-            //             'model' => "ToDoMeta",
-            //             'module' => "ToDo"
-            //         ]);
-            //         break;
-            //     default:
-            //         break;
-            // }
-            Module::setCurrentConfig(null, $return['config'], $module);
+
+            // var_dump($request->input());
+            // var_dump($return['moduleConfig']);
+        } catch (Exception $e) {
+            $return['alert'] = ['type' => 'error', 'message' => $e->getMessage()];
         }
+        return self::view($return['view'], $return);
+    }
 
-
-
-        foreach ($return['files'] as $file) {
-            foreach (config('modules.config.files') ?? [] as $key => $path) {
-                if (!isset($return[$key])) $return[$key] = [];
-                if (substr($file->getRelativePathName(), 0, strlen($path)) == $path) {
-                    array_push($return[$key], $file);
-                    break;
-                }
-            }
-        }
-
-        // var_dump($request->input());
+    function view_admin_system_artisan(Request $request)
+    {
+        Artisan::call('list');
+        $return = [
+            '$request' => $request->all(),
+            'view' => 'admin::admin.system.artisan',
+            'commands' => Artisan::output(),
+        ];
+        // explode("\n", Artisan::output())
         // var_dump($return);
         return self::view($return['view'], $return);
     }

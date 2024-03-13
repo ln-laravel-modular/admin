@@ -34,13 +34,8 @@ Route::prefix(\App\Support\Helpers\ModuleHelper::current_config('web.prefix'))->
     Route::get('/forget-password', 'AdminController@view_forget_password');
     Route::get('/config', 'AdminController@view_config');
     Route::prefix('system')->group(function () {
-        Route::get('/artisan', function (Request $request) {
-            $kernel = app()->make(Illuminate\Contracts\Console\Kernel::class);
-            $status = '';
-            $kernel->terminate('module:make temp1', $status);
-            var_dump($kernel);
-            var_dump($status);
-        });
+        Route::match(['get', 'post'], '/artisan', 'AdminController@view_admin_system_artisan');
+        Route::match(['get', 'post'], '/config', 'AdminController@view_admin_modules_config');
     });
 
     /**

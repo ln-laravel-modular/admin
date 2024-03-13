@@ -1,10 +1,25 @@
-@extends($module_config['layout'] . '::index')
+@extends($config['slug'] . '::layouts.master')
 
 
 @section('content')
   <section class="content">
     <div class="container-fluid">
       <div class="row">
+
+        @empty($alert)
+        @else
+          <div class="col-md-12">
+            <div class="alert alert-{{ $alert['type'] }}" role="alert">
+              {{ $alert['message'] }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+
+            </div>
+          </div>
+        @endempty
+
+
         <div class="col-md-6">
           <form method="POST">
             @csrf
@@ -21,23 +36,25 @@
                 </div>
                 <div class="form-group">
                   <label>Name <small class="text-muted">模块名称</small></label>
-                  <input type="text" class="form-control" name='title' value="{{ $config['name'] ?? '' }}" disabled>
+                  <input type="text" class="form-control" name='title' value="{{ $moduleConfig['name'] ?? '' }}"
+                    disabled>
                 </div>
                 <div class="form-group">
                   <label>Slug <small class="text-muted">模块别名</small></label>
-                  <input type="text" class="form-control" name='slug' value="{{ $config['slug'] ?? '' }}">
+                  <input type="text" class="form-control" name='slug' value="{{ $moduleConfig['slug'] ?? '' }}">
                 </div>
                 <div class="form-group">
                   <label>Title <small class="text-muted">模块标题</small></label>
-                  <input type="text" class="form-control" name='title' value="{{ $config['title'] ?? '' }}">
+                  <input type="text" class="form-control" name='title' value="{{ $moduleConfig['title'] ?? '' }}">
                 </div>
                 <div class="form-group">
                   <label>Type <small class="text-muted">模块类型: project, theme, extra, other</small></label>
-                  <input type="text" class="form-control" name='type' value="{{ $config['type'] ?? '' }}">
+                  <input type="text" class="form-control" name='type'
+                    value="{{ $moduleConfig['type'] ?? 'project' }}">
                 </div>
                 <div class="form-group">
                   <label>Description <small class="text-muted">模块说明</small></label>
-                  <textarea class="form-control" name='description' rows="3">{{ $config['description'] ?? '' }}</textarea>
+                  <textarea class="form-control" name='description' rows="3">{{ $moduleConfig['description'] ?? '' }}</textarea>
                 </div>
               </div>
               <!-- /.card-body -->
@@ -55,16 +72,23 @@
             <!-- form start -->
             <div class="card-body">
               <div class="form-group">
-                <label>Component <small class="text-muted">模块...</small></label>
-                <input type="text" class="form-control" name='component' value="{{ $config['component'] ?? '' }}">
+                <label>UI <small class="text-muted">模块界面框架</small></label>
+                <input type="text" class="form-control" name='ui'
+                  value="{{ $moduleConfig['ui'] ?? 'bootstrap' }}">
               </div>
               <div class="form-group">
-                <label>Layout <small class="text-muted">模块...</small></label>
-                <input type="text" class="form-control" name='layout' value="{{ $config['layout'] ?? '' }}">
+                <label>Component <small class="text-muted">模块组件</small></label>
+                <input type="text" class="form-control" name='component'
+                  value="{{ $moduleConfig['component'] ?? '' }}">
               </div>
               <div class="form-group">
-                <label>Theme <small class="text-muted">模块...</small></label>
-                <input type="text" class="form-control" name='theme' value="{{ $config['theme'] ?? '' }}">
+                <label>Layout <small class="text-muted">模块布局</small></label>
+                <input type="text" class="form-control" name='layout' value="{{ $moduleConfig['layout'] ?? '' }}">
+              </div>
+              <div class="form-group">
+                <label>Theme <small class="text-muted">模块主题</small></label>
+                <input type="text" class="form-control" name='theme'
+                  value="{{ $moduleConfig['theme'] ?? 'default' }}">
               </div>
             </div>
             <!-- /.card-body -->
@@ -82,7 +106,7 @@
             <div class="card-body">
               <div class="form-group">
                 <label>Prefix <small class="text-muted">模块前缀</small></label>
-                <input type="text" class="form-control" name='prefix' value="{{ $config['prefix'] ?? '' }}">
+                <input type="text" class="form-control" name='prefix' value="{{ $moduleConfig['prefix'] ?? '' }}">
               </div>
             </div>
             <!-- /.card-body -->
@@ -91,7 +115,8 @@
               <button type="submit" class="btn btn-sm btn-primary">Submit</button>
             </div>
           </div>
-          <div class="card card-default">
+
+          <div class="card card-default d-none">
             <div class="card-header">
               <h3 class="card-title">Layout <small class="text-muted">布局</small></h3>
             </div>
@@ -114,11 +139,11 @@
             <div class="card-body">
               <div class="form-group">
                 <label>Key <small class="text-muted">模块...</small></label>
-                <input type="text" class="form-control" name='key' value="{{ $config['key'] ?? '' }}">
+                <input type="text" class="form-control" name='key' value="{{ $moduleConfig['key'] ?? '' }}">
               </div>
               <div class="form-group">
                 <label>MD5 <small class="text-muted">模块...</small></label>
-                <input type="text" class="form-control" name='md5' value="{{ $config['md5'] ?? '' }}">
+                <input type="text" class="form-control" name='md5' value="{{ $moduleConfig['md5'] ?? '' }}">
               </div>
             </div>
             <!-- /.card-body -->
@@ -129,7 +154,6 @@
           </div>
         </div>
         <div class="col-md-6">
-
         @section('entities')
           <div class="card card-default">
             <div class="card-header">
@@ -151,19 +175,19 @@
               </form>
             </div>
             <!-- /.card-header -->
-            <div class="card-body">
+            <div class="card-body d-none">
               <h5 class="card-title">Card title</h5>
               <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
                 content.</p>
             </div>
             <ul class="list-group list-group-flush">
-              @foreach ($entities ?? [] as $file)
+              @foreach ($moduleConfig['entities'] ?? [] as $file)
                 <li class="list-group-item">
                   <div class="form-group mb-0">
                     <div class="icheck-primary d-inline">
                       <input type="checkbox" disabled>
                       <label for="checkboxPrimary2">
-                        {{ pathinfo($file->getPathName(), PATHINFO_FILENAME) }}
+                        {{ basename($file) }}
                       </label>
                     </div>
                   </div>
@@ -205,7 +229,7 @@
             </div>
 
             <ul class="list-group list-group-flush">
-              @foreach ($config['factories'] ?? [] as $factory)
+              @foreach ($moduleConfig['factories'] ?? [] as $factory)
                 <li class="list-group-item">
                   <div class="form-group mb-0">
                     <div class="icheck-primary d-inline">
@@ -244,18 +268,11 @@
             <!-- /.card-header -->
             <!-- form start -->
             <div class="card-body d-none">
-              <div class="form-group">
-                <label>Title</label>
-                <input type="text" class="form-control" name='title' value="{{ $config['name'] ?? '' }}">
-              </div>
-              <div class="form-group">
-                <label>Slug</label>
-                <input type="text" class="form-control" name='slug' value="{{ $config['name'] ?? '' }}">
-              </div>
+
             </div>
             <!-- /.card-body -->
             <ul class="list-group list-group-flush">
-              @foreach ($config['migrations'] ?? [] as $migration)
+              @foreach ($moduleConfig['migrations'] ?? [] as $migration)
                 <li class="list-group-item">
                   <div class="form-group mb-0">
                     <div class="icheck-primary d-inline">
@@ -298,26 +315,16 @@
             <!-- /.card-header -->
             <!-- form start -->
             <div class="card-body d-none">
-              @foreach ($seeders ?? [] as $file)
-                <div class="form-group">
-                  <div class="icheck-primary d-inline">
-                    <input type="checkbox" disabled>
-                    <label for="checkboxPrimary2">
-                      {{ pathinfo($file->getPathName(), PATHINFO_FILENAME) }}
-                    </label>
-                  </div>
-                </div>
-              @endforeach
             </div>
             <!-- /.card-body -->
             <ul class="list-group list-group-flush">
-              @foreach ($seeders ?? [] as $file)
+              @foreach ($moduleConfig['seeders'] ?? [] as $file)
                 <li class="list-group-item">
                   <div class="form-group mb-0">
                     <div class="icheck-primary d-inline">
                       <input type="checkbox" disabled>
                       <label for="checkboxPrimary2">
-                        {{ pathinfo($file->getPathName(), PATHINFO_FILENAME) }}
+                        {{ basename($file) }}
                       </label>
                     </div>
                   </div>

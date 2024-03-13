@@ -1,4 +1,4 @@
-@extends($module_config['layout'] . '::layouts.admin')
+@extends($moduleConfig['layout'] . '::layouts.admin')
 
 @section('content')
   <!-- Main content -->
@@ -41,18 +41,19 @@
                   </tr>
                 </thead>
                 <tbody>
-                  @foreach ($paginator ?? [] as $content)
+                  @foreach ($moduleTablePaginator ?? [] as $moduleTableDetail)
                     <tr>
                       <td>
                         <div class="form-check">
-                          <input class="form-check-input" type="checkbox" value="{{ $content->cid }}">
+                          <input class="form-check-input" type="checkbox" value="{{ $moduleTableDetail->cid }}">
                         </div>
                       </td>
-                      <td><a class="" href="contents/{{ $content->cid }}">{{ $content->cid }}</a></td>
-                      <td>{{ $content->title }}</td>
-                      <td>{{ $content->status }}</td>
-                      <td>{{ $content->created_at }}</td>
-                      <td>{{ $content->updated_at }}</td>
+                      <td><a class=""
+                          href="contents/{{ $moduleTableDetail->cid }}">{{ $moduleTableDetail->cid }}</a></td>
+                      <td>{{ $moduleTableDetail->title }}</td>
+                      <td>{{ $moduleTableDetail->status }}</td>
+                      <td>{{ $moduleTableDetail->created_at }}</td>
+                      <td>{{ $moduleTableDetail->updated_at }}</td>
                     </tr>
                   @endforeach
                 </tbody>
@@ -62,14 +63,14 @@
             <!-- /.card-body -->
             <div class="card-footer clearfix">
               <div class="card-footer__left float-left">
-                <a type="button" class="btn btn-sm btn-info" href="/admin/note/contents/insert">新增</a>
+                <a type="button" class="btn btn-sm btn-info" href="contents/insert">新增</a>
                 <button type="button" class="btn btn-sm btn-danger">删除</button>
                 <button type="button" class="btn btn-sm btn-secondary">Right</button>
               </div>
               <div class="card-footer__right float-right">
                 <ul class="pagination m-0">
                   <li class="page-item">
-                    <a class="page-link" href="{{ $paginator->previousPageUrl() }}">
+                    <a class="page-link" href="{{ $moduleTablePaginator->previousPageUrl() }}">
                       <i class="fas fa-angles-left"></i>
                     </a>
                   </li>
@@ -77,7 +78,7 @@
                   <li class="page-item"><a class="page-link" href="#">2</a></li>
                   <li class="page-item"><a class="page-link" href="#">3</a></li>
                   <li class="page-item">
-                    <a class="page-link" href="{{ $paginator->nextPageUrl() }}">
+                    <a class="page-link" href="{{ $moduleTablePaginator->nextPageUrl() }}">
                       <i class="fas fa-angles-right"></i>
                     </a>
                   </li>

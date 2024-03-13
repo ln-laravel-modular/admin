@@ -1,1 +1,1 @@
-@extends($module_config['layout'] . '::layouts.main')
+@extends($moduleConfig['layout'] . '::layouts.main')

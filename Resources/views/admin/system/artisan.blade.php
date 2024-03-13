@@ -1,5 +1,6 @@
 @extends($moduleConfig['layout'] . '::layouts.admin')
 
+
 @section('content')
   <section class="content">
     <div class="container-fluid">
@@ -12,18 +13,7 @@
         <form method="post">
           @csrf
           <div class="card-body">
-            <div class="form-group">
-              <label>Title</label>
-              <input type="text" class="form-control" name='title' value="{{ $detail->title }}">
-            </div>
-            <div class="form-group">
-              <label>Slug</label>
-              <input type="text" class="form-control" name='slug' value="{{ $detail->slug }}">
-            </div>
-            <div class="form-group">
-              <label>Text</label>
-              <textarea class="form-control" name='text' rows="3">{{ $detail->text }}</textarea>
-            </div>
+            <p class="text-light bg-dark">{{ $commands }}</p>
           </div>
           <!-- /.card-body -->
 

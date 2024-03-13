@@ -1,1 +1,1 @@
-@extends($module_config['layout'] . '::index')
+@extends($moduleConfig['layout'] . '::index')
