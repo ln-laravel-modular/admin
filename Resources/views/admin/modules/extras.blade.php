@@ -1,1 +1,1 @@
-@extends($moduleConfig['layout'] . '::index')
+@extends($config['slug'] . '::layouts.master')

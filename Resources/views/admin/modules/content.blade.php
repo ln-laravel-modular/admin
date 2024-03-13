@@ -1,4 +1,4 @@
-@extends($moduleConfig['layout'] . '::layouts.admin')
+@extends($config['slug'] . '::layouts.master')
 
 @section('content')
   <section class="content">

@@ -154,110 +154,56 @@
           </div>
         </div>
         <div class="col-md-6">
-        @section('entities')
-          <div class="card card-default">
-            <div class="card-header">
-              <h3 class="card-title">Entities <small>模型实体</small></h3>
-              <form method="POST" class="card-tools mb-0">
-                @csrf
-                <div class="form-group d-none">
-                  <label>Config Target</label>
-                  <input type="text" class="form-control" name='_target' value="make-model">
-                </div>
-                <div class="input-group input-group-sm">
-                  <input type="text" name="model" class="form-control float-right" placeholder="Make Model">
-                  <div class="input-group-append">
-                    <button type="submit" class="btn btn-default">
-                      <i class="fas fa-plus"></i>
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
-            <!-- /.card-header -->
-            <div class="card-body d-none">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-                content.</p>
-            </div>
-            <ul class="list-group list-group-flush">
-              @foreach ($moduleConfig['entities'] ?? [] as $file)
-                <li class="list-group-item">
-                  <div class="form-group mb-0">
-                    <div class="icheck-primary d-inline">
-                      <input type="checkbox" disabled>
-                      <label for="checkboxPrimary2">
-                        {{ basename($file) }}
-                      </label>
-                    </div>
-                  </div>
-                </li>
-              @endforeach
-            </ul>
+          @php
+            // ['target', 'make-prepend', 'make-append', 'title', 'description', 'files'];
+            $makes = [
+                ['command', null, null, null, 'Artisan 命令'],
+                ['component', null, null, null, '组件'],
+                ['component-view'],
+                ['controller'],
+                ['event'],
+                ['factory', null, null, 'Factories', '模型工厂', $moduleConfig['factories']],
+                ['job', null, null, null, '队列任务'],
+                ['listener'],
+                ['mail', null, null, null, '可邮寄类'],
+                ['middleware'],
+                ['migration', 'create_', '_table', 'Migration', '数据库迁移', $moduleConfig['migrations']],
+                ['model', $moduleConfig['name'], null, 'Entities', '模型实体', $moduleConfig['entities']],
+                ['notification', null, null, null, '消息通知'],
+                ['policy'],
+                ['provider'],
+                ['request'],
+                ['resource'],
+                ['rule'],
+                ['seed', $moduleConfig['name'], 'Seeder', 'Seeder', '数据填充', $moduleConfig['seeders']],
+                ['test'],
+            ];
+          @endphp
+          {{-- @each('admin::components.config.module-make', [['target' => 'make-model']], 'attributes') --}}
+          @foreach ($makes as $make)
+            <x-admin::config.module-make :props="$make"></x-admin::config.module-make>
+          @endforeach
+          {{-- <x-admin::config.module-make :attributes="['title' => 'Entities']"></x-admin::config.module-make>
+          <x-admin::config.module-make target="make-model" title='Entities' description="模型实体" :files="$moduleConfig['entities']">
+          </x-admin::config.module-make>
+          <x-admin::config.module-make target="make-model" title='Factories' description="模型工厂"
+            :files="$moduleConfig['factories']"></x-admin::config.module-make> --}}
+          {{-- @include($config['slug'] . '::admin.modules.config.make-model') --}}
+          {{-- @include($config['slug'] . '::admin.modules.config.make-factory') --}}
 
-            <div class="card-footer">
-              <button type="submit" class="btn btn-sm btn-primary">Submit</button>
-            </div>
-          </div>
-        @show
-
-        @section('factories')
-          <div class="card card-default">
-            <div class="card-header">
-              <h3 class="card-title">Factories <small>模型工厂</small></h3>
-              <form method="POST" class="card-tools mb-0">
-                @csrf
-                <div class="form-group d-none">
-                  <label>Config Target</label>
-                  <input type="text" class="form-control" name='_target' value="make-factory">
-                </div>
-                <div class="input-group input-group-sm">
-                  <input type="text" name="factory" class="form-control float-right" placeholder="Make Factory">
-                  <div class="input-group-append">
-                    <button type="submit" class="btn btn-default">
-                      <i class="fas fa-plus"></i>
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
-            <!-- /.card-header -->
-            <div class="card-body d-none">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-                content.</p>
-            </div>
-
-            <ul class="list-group list-group-flush">
-              @foreach ($moduleConfig['factories'] ?? [] as $factory)
-                <li class="list-group-item">
-                  <div class="form-group mb-0">
-                    <div class="icheck-primary d-inline">
-                      <input type="checkbox" disabled>
-                      <label for="checkboxPrimary2">
-                        {{ $factory }}
-                      </label>
-                    </div>
-                  </div>
-                </li>
-              @endforeach
-            </ul>
-
-            <div class="card-footer">
-              <button type="submit" class="btn btn-sm btn-primary">Submit</button>
-            </div>
-          </div>
-        @show
         @section('migrations')
-          <div class="card card-default">
+          <div class="card card-default d-none">
             <div class="card-header">
               <h3 class="card-title">Migration <small>数据库迁移</small></h3>
               <form class="card-tools mb-0">
-                <div class="input-group input-group-sm">
-                  <input type="text" name="make_migration" class="form-control float-right"
+                <div class="input-group input-group-sm" style="width: 280px;">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">create_</span>
+                  </div>
+                  <input type="text" name="make-migration" class="form-control float-right"
                     placeholder="Make Migration">
-
                   <div class="input-group-append">
+                    <span class="input-group-text">_table</span>
                     <button type="submit" class="btn btn-default">
                       <i class="fas fa-plus"></i>
                     </button>
@@ -272,13 +218,13 @@
             </div>
             <!-- /.card-body -->
             <ul class="list-group list-group-flush">
-              @foreach ($moduleConfig['migrations'] ?? [] as $migration)
+              @foreach ($moduleConfig['migrations'] ?? [] as $file)
                 <li class="list-group-item">
                   <div class="form-group mb-0">
                     <div class="icheck-primary d-inline">
                       <input type="checkbox" disabled>
                       <label for="checkboxPrimary2">
-                        {{ $migration }}
+                        {{ basename($file) }}
                       </label>
                     </div>
                   </div>
@@ -292,18 +238,24 @@
         @show
 
         @section('seeders')
-          <div class="card card-default">
+          <div class="card card-default d-none">
             <div class="card-header">
 
               <h3 class="card-title">Seeder <small>数据填充</small></h3>
               <div class="card-tools">
                 <form action="" class="mb-0">
 
-                  <div class="input-group input-group-sm">
-                    <input type="text" name="make_seeder" class="form-control float-right"
+                  <div class="input-group input-group-sm" style="width: 280px;">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">{{ $moduleConfig['name'] }}</span>
+                      <input type="hidden" class="form-control" name='seeder-prepend'
+                        value="{{ $moduleConfig['name'] }}">
+                    </div>
+                    <input type="text" name="make-seeder" class="form-control float-right"
                       placeholder="Make Seeder">
 
                     <div class="input-group-append">
+                      <span class="input-group-text">Seeder</span>
                       <button type="submit" class="btn btn-default">
                         <i class="fas fa-plus"></i>
                       </button>

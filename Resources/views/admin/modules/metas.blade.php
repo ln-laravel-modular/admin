@@ -1,4 +1,4 @@
-@extends($moduleConfig['layout'] . '::layouts.main')
+@extends($config['slug'] . '::layouts.master')
 
 @section('content')
   <!-- Main content -->
