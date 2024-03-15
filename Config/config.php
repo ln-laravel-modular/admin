@@ -110,7 +110,13 @@ return array(
                         'path' => '/modules',
                         'title' => '应用管理',
                         'children' =>
-                        array(),
+                        array(
+                            array(
+                                'path' => '/{module}',
+                                'title' => 'Config',
+                                'visible' => false,
+                            ),
+                        ),
                     ),
                 ),
             ),

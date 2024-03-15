@@ -36,6 +36,11 @@ Route::prefix(\App\Support\Helpers\ModuleHelper::current_config('web.prefix'))->
     Route::prefix('system')->group(function () {
         Route::match(['get', 'post'], '/artisan', 'AdminController@view_admin_system_artisan');
         Route::match(['get', 'post'], '/config', 'AdminController@view_admin_modules_config');
+        Route::match(['get'], '/modules', 'AdminController@view_admin_system_modules');
+        Route::match(['get', 'post'], '/modules/{table}', 'AdminController@view_admin_system_modules_config')
+            ->where(['module' => '(' . implode('|', array_filter(array_values(Module::allConfig('web.prefix')), function ($value) {
+                return $value !== strtolower(Module::current());
+            })) . ')']);
     });
 
     /**
@@ -46,6 +51,7 @@ Route::prefix(\App\Support\Helpers\ModuleHelper::current_config('web.prefix'))->
             return $value !== strtolower(Module::current());
         })) . ')'])
         ->group(function () {
+            Route::match(['get', 'post'], '', 'AdminController@view_admin_modules_index');
             Route::prefix('{table}')->where(['table' => '(metas|contents|comments|links)'])->group(function () {
                 Route::get('', 'AdminController@view_admin_modules_select_list');
 
@@ -53,7 +59,7 @@ Route::prefix(\App\Support\Helpers\ModuleHelper::current_config('web.prefix'))->
 
                 Route::match(['get', 'post'], '/{id}', 'AdminController@view_admin_modules_select_item')->where(['id' => '[0-9]+']);
             });
-            Route::match(['get', 'post'], '/config', 'AdminController@view_admin_modules_config');
+            // Route::match(['get', 'post'], '/config', 'AdminController@view_admin_modules_config');
         });
     // Route::prefix('module-market')->group(function () {
     //     Route::get('/', 'AdminController@view_module_market');

@@ -11,7 +11,7 @@
 @endphp
 <div class="card card-default">
   <div class="card-header">
-    <h3 class="card-title">{{ $title ?? isset($target) ? Str::of($target)->plural()->camel()->ucfirst() : 'title' }}
+    <h3 class="card-title">{{ $title ?? (isset($target) ? Str::of($target)->plural()->camel()->ucfirst() : 'title') }}
       <small>{{ $description ?? '' }}</small>
     </h3>
     @isset($target)
@@ -53,8 +53,13 @@
         <div class="form-group mb-0">
           <div class="icheck-primary d-inline">
             <input type="checkbox" disabled>
-            <label for="checkboxPrimary2">
-              {{ basename($file) }}
+            <label>
+              {{-- {{ $file }} --}}
+              {{-- {{ Str::of($target)->plural() }} --}}
+              {{-- {{ config('modules.config.files.' . Str::of($target)->plural()) }} --}}
+              {{-- {{ Str::of($file)->after(config('modules.paths.generator.' . $target))->before('.blade') }} --}}
+              {{-- {{ Str::of($file)->after(config('modules.paths.generator.' . $target)) }} --}}
+              {{ Str::of($file)->after(config('modules.paths.generator.' . $target . '.path') . '\\')->before('.blade') }}
             </label>
           </div>
         </div>

@@ -7,12 +7,15 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
-use Nwidart\Modules\Commands\ModelMakeCommand;
+use Nwidart\Modules\Facades\Module as FacadesModule;
+use Nwidart\Modules\Laravel\Module as LaravelModule;
 use Nwidart\Modules\Module;
 
 class AdminController extends \App\Http\Controllers\Controller
@@ -239,15 +242,41 @@ trait ViewWebTrait
 
 trait ViewAdminTrait
 {
+    public function view_admin_modules_index(Request $request, $module)
+    {
+        $return = [
+            'view' => 'admin::admin.modules.index',
+            'moduleConfig' => Module::currentConfig(null, $module, 'files'),
+            'method' => 'view_admin_index',
+            // 'jsdelivrs' => Http::get('http://data.jsdelivr.com/v1/stats/packages')->json()
+        ];
+        foreach (Arr::get($return, 'moduleConfig.controllers') as $controller) {
+            if (strtolower(basename($controller)) === strtolower(Arr::get($return, 'moduleConfig.name') . 'AdminController')) {
+                $return['moduleController'] = $controller;
+                break;
+            }
+        }
+        if (isset($return['moduleController'])) {
+            // return $this->__call();
+            return call_user_func([new $return['moduleController'], $return['method']], $request, $return);
+        }
+        // var_dump(Arr::get($return['moduleConfig'], 'controllers'));
+        // var_dump(Arr::get($return['moduleConfig'], 'name') . 'AdminController');
+        // $response = Http::get('http://data.jsdelivr.com/v1/stats/packages');
+        // var_dump($response->json());
+        return self::view($return['view'], $return);
+    }
     // 通用模块数据新增视图
     function view_admin_modules_insert_item(Request $request, $module, $table)
     {
         $return = [
             'view' => 'admin::admin.modules.' . substr($table, 0, -1),
-            'moduleEntities' => Module::currentConfig('entities', $module, true),
+            'moduleConfig' => Module::currentConfig(null, $module, 'files'),
+            'moduleModels' => Module::currentConfig('entities', $module, true),
+            'method' => 'view_admin_insert_item',
         ];
         // var_dump($return);
-        foreach ($return['moduleEntities'] as $entity) {
+        foreach ($return['moduleModels'] as $entity) {
             if (strtolower(basename($entity)) === strtolower($module . substr($table, 0, -1))) {
                 $return['moduleEntity'] = $entity;
                 break;
@@ -269,9 +298,10 @@ trait ViewAdminTrait
     {
         $return = [
             'view' => 'admin::admin.modules.' . substr($table, 0, -1),
-            'moduleEntities' => Module::currentConfig('entities', $module, 'files'),
+            'moduleModels' => Module::currentConfig('entities', $module, 'files'),
+            'method' => 'view_admin_select_item',
         ];
-        foreach ($return['moduleEntities'] as $entity) {
+        foreach ($return['moduleModels'] as $entity) {
             if (strtolower(basename($entity)) === strtolower($module . substr($table, 0, -1))) {
                 $return['moduleEntity'] = $entity;
                 break;
@@ -291,9 +321,9 @@ trait ViewAdminTrait
 
         $return = [
             'view' => 'admin::admin.modules.' . $table,
-            'moduleEntities' => Module::currentConfig('entities', $module, 'files'),
+            'moduleModels' => Module::currentConfig('entities', $module, 'files'),
         ];
-        foreach ($return['moduleEntities'] as $entity) {
+        foreach ($return['moduleModels'] as $entity) {
             if (strtolower(basename($entity)) === strtolower($module . substr($table, 0, -1))) {
                 $return['moduleEntity'] = $entity;
                 break;
@@ -306,14 +336,13 @@ trait ViewAdminTrait
     }
 
     // TODO:通用模块参数配置视图
-    function view_admin_modules_config(Request $request, $module = null)
+    function view_admin_system_modules_config(Request $request, $module = null)
     {
         if (empty($module)) $module = Module::current();
         $return = [
             // 'prefix' => '',
-            'request' => $request->all(),
             // 'files' => app('files')->allFiles('modules\\' . Module::currentConfig('name', $module)),
-            'view' => 'admin::admin.modules.config',
+            'view' => 'admin::admin.system.modules.config',
             'moduleConfig' => Module::currentConfig(null, $module, 'files'),
             'structure' => [],
         ];
@@ -324,33 +353,52 @@ trait ViewAdminTrait
 
                 if (in_array($request->input('_target'), array_keys(config('modules.config.update-keys')))) {
                     foreach (config('modules.config.update-keys.' . $request->input('_target')) as $key) {
-                        $return['moduleConfig'][$key] = $request->input($key, Module::currentConfig($key, $module));
+                        Arr::set($return['moduleConfig'], $key, $request->input(Str::of($key)->replace('.', '_'), Module::currentConfig($key, $module)));
+                        // $return['moduleConfig'][$key] = $request->input($key, Module::currentConfig($key, $module));
                     }
+                    Module::setCurrentConfig(null, $return['moduleConfig'], $module);
+                    $return['alert'] = ['type' => 'success', 'message' => 'Update config successfully!'];
                 }
 
-                // if (in_array($request->input('_target'), ['make-model'])) {
-                //     Artisan::call('module:' . $request->input('_target'),  [
-                //         'module' => Module::currentConfig('name', $module),
-                //         'command' => $request->input('command'),
-                //         'model' => $request->input('model'),
-                //     ]);
-                //     var_dump(Module::setCurrentConfig(null, $return['config'], $module));
-                // }
-                // switch ($request->input('_target')) {
-                //     case 'make-model':
-                //
-                //         // $res = new \Nwidart\Modules\Commands\ModelMakeCommand;
-                //         // var_dump($res->handle('ToDoMeta ToDo'));
-                //         Artisan::call('module:make-model', [
-                //             'model' => "ToDoMeta",
-                //             'module' => "ToDo"
-                //         ]);
-                //         break;
-                //     default:
-                //         break;
-                // }
-                Module::setCurrentConfig(null, $return['moduleConfig'], $module);
-                $return['alert'] = ['type' => 'success', 'message' => 'Update config successfully!'];
+                if (in_array($request->input('_target'), array_keys(config('modules.config.commands')))) {
+                    $target = $request->input('_target');
+                    if (Str::startsWith($target, 'make-')) {
+                        $request->merge([
+                            'cmd' => 'module:'
+                                . $request->input('_target')
+                                . ' '
+                                . $request->input('make-prepend')
+                                . $request->input(Str::of($request->input('_target'))->after('make-'))
+                                . $request->input('make-append')
+                                . ' '
+                                . Module::currentConfig('name', $module)
+                        ]);
+                        Artisan::call($request->input('cmd'));
+                        $return['alert'] = ['type' => 'success', 'message' => Artisan::output()];
+                    }
+
+                    $return['moduleConfig'] = Module::currentConfig(null, $module, 'files');
+                    // $request->
+                    //     Artisan::call('module:' . $request->input('_target'),  [
+                    //         'module' => Module::currentConfig('name', $module),
+                    //         'command' => $request->input('command'),
+                    //         'model' => $request->input('model'),
+                    //     ]);
+                    //     var_dump(Module::setCurrentConfig(null, $return['config'], $module));
+                    // }
+                    // switch ($request->input('_target')) {
+                    //     case 'make-model':
+                    //
+                    //         // $res = new \Nwidart\Modules\Commands\ModelMakeCommand;
+                    //         // var_dump($res->handle('ToDoMeta ToDo'));
+                    //         Artisan::call('module:make-model', [
+                    //             'model' => "ToDoMeta",
+                    //             'module' => "ToDo"
+                    //         ]);
+                    //         break;
+                    //     default:
+                    //         break;
+                }
             }
 
 
@@ -367,9 +415,11 @@ trait ViewAdminTrait
 
             // var_dump($request->input());
             // var_dump($return['moduleConfig']);
+
         } catch (Exception $e) {
             $return['alert'] = ['type' => 'error', 'message' => $e->getMessage()];
         }
+        // var_dump($return);*
         return self::view($return['view'], $return);
     }
 
@@ -383,6 +433,15 @@ trait ViewAdminTrait
         ];
         // explode("\n", Artisan::output())
         // var_dump($return);
+        return self::view($return['view'], $return);
+    }
+
+    public function view_admin_system_modules(Request $request)
+    {
+        $return = [
+            'view' => 'admin::admin.system.modules.index',
+            'modules' => FacadesModule::all(),
+        ];
         return self::view($return['view'], $return);
     }
 }
