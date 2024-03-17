@@ -50,6 +50,10 @@
               <a class="nav-link" id="pills-make-tab" data-toggle="pill" data-target="#pills-make" type="button"
                 role="tab" aria-controls="pills-make" aria-selected="true">Make</a>
             </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" id="pills-market-tab" data-toggle="pill" data-target="#pills-market" type="button"
+                role="tab" aria-controls="pills-market" aria-selected="true">Market</a>
+            </li>
           </ul>
         </div>
 
@@ -71,6 +75,8 @@
             </div>
             <div class="tab-pane fade" id="pills-make" role="tabpanel" aria-labelledby="pills-make-tab">
               @include('admin::admin.system.modules.config-make')
+            </div>
+            <div class="tab-pane fade" id="pills-market" role="tabpanel" aria-labelledby="pills-market-tab">
             </div>
           </div>
         </div>

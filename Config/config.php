@@ -10,7 +10,7 @@ return array(
     'component' => NULL,
     'ui' => 'adminlte',
     'layout' => 'adminlte',
-    'theme' => 'default',
+    'theme' => 'master',
     'web' =>
     array(
         'prefix' => NULL,

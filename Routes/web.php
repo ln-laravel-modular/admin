@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Modules\Admin\Http\Controllers\AdminController;
-use Nwidart\Modules\Laravel\Module;
+use Modules\Core\Support\Module;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +19,7 @@ use Nwidart\Modules\Laravel\Module;
 |
 */
 
-Route::prefix(\App\Support\Helpers\ModuleHelper::current_config('web.prefix'))->group(function () {
+Route::prefix(Module::currentConfig('web.prefix'))->group(function () {
     Route::get('/', 'AdminController@view_index');
     Route::post('/', function (Request $request) {
         // $user = new User(['name' => 'guest', 'password' => 'guest', 'email' => 'guest@guest']);
