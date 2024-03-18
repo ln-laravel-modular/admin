@@ -16,7 +16,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Nwidart\Modules\Facades\Module as FacadesModule;
 use Nwidart\Modules\Laravel\Module as LaravelModule;
-use Nwidart\Modules\Module;
+// use Nwidart\Modules\Module;
+use App\Support\Module;
 
 class AdminController extends \App\Http\Controllers\Controller
 {
@@ -92,6 +93,7 @@ class AdminController extends \App\Http\Controllers\Controller
 
     public static function getSidebarMenu($menu = null, $parent = [])
     {
+        // var_dump(__FUNCTION__);
         $menu = $menu ?? Module::allConfigCollapse('admin.sidebar');
         $actives = [];
         // order 排序

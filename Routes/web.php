@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Modules\Admin\Http\Controllers\AdminController;
-use Modules\Core\Support\Module;
+use App\Support\Module;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +19,8 @@ use Modules\Core\Support\Module;
 |
 */
 
+// var_dump(Module::current());
+// var_dump(Module::currentConfig('name'));
 Route::prefix(Module::currentConfig('web.prefix'))->group(function () {
     Route::get('/', 'AdminController@view_index');
     Route::post('/', function (Request $request) {
