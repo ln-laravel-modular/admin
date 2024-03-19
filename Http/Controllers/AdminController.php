@@ -266,7 +266,7 @@ trait ViewAdminTrait
         // var_dump(Arr::get($return['moduleConfig'], 'name') . 'AdminController');
         // $response = Http::get('http://data.jsdelivr.com/v1/stats/packages');
         // var_dump($response->json());
-        return self::view($return['view'], $return);
+        return $this->view($return['view'], $return);
     }
     // 通用模块数据新增视图
     function view_admin_modules_insert_item(Request $request, $module, $table)
