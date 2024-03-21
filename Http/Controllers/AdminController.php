@@ -2,6 +2,7 @@
 
 namespace Modules\Admin\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
@@ -160,6 +161,7 @@ trait ApiTrait
 {
     function api_login(Request $request)
     {
+        Auth::login(new User(['email' => $request->input('email'), 'password' => $request->input('password'),]), true);
     }
     function api_logout(Request $request)
     {
@@ -186,55 +188,71 @@ trait ViewTrait
 {
     function view_register(Request $request)
     {
-        return self::view('admin::register');
+        $return = [
+            'view' => "register"
+        ];
+        return $this->view($return);
     }
     function view_login(Request $request)
     {
-        return self::view('admin::login');
+        if ($request->method() == 'POST') {
+            $this->api_login($request);
+            if (Auth::check()) return redirect("/admin");
+        }
+        $return = [
+            'view' => "login"
+        ];
+        return $this->view($return);
     }
-    function view_forget_password(Request $request)
+    function view_forgot_password(Request $request)
     {
-        return self::view('admin::forget-password');
+        $return = [
+            'view' => "forgot-password"
+        ];
+        return $this->view($return);
     }
     function view_index(Request $request)
     {
 
-        // if (!Auth::check()) return redirect("/admin/login");
-        return self::view('admin::index');
+        if (!Auth::check()) return redirect("/admin/login");
+        $return = [
+            'view' => "index"
+        ];
+        return $this->view($return);
     }
     function view_index2(Request $request)
     {
-        return self::view('admin::index2');
+        return $this->view('admin::index2');
     }
     function view_index3(Request $request)
     {
-        return self::view('admin::index3');
+        return $this->view('admin::index3');
     }
 
     function view_config(Request $request)
     {
-        return self::view('admin::admin.config.index');
+        return $this->view('admin::admin.config.index');
     }
     function view_module_market(Request $request)
     {
-        return self::view('admin::market.index');
+        return $this->view('admin::market.index');
     }
     function view_module_market_intro(Request $request, $slug)
     {
-        return self::view('admin::market.module-intro', [
+        return $this->view('admin::market.module-intro', [
             'slug' => $slug,
         ]);
     }
     function view_module_market_install(Request $request, $slug)
     {
         $_GET['step'] = $_GET['step'] ?? 1;
-        return self::view('admin::market.module-install', [
+        return $this->view('admin::market.module-install', [
             'slug' => $slug,
         ]);
     }
     function view_module_installed(Request $request)
     {
-        return self::view('admin::market.index');
+        return $this->view('admin::market.index');
     }
 }
 
@@ -247,7 +265,7 @@ trait ViewAdminTrait
     public function view_admin_modules_index(Request $request, $module)
     {
         $return = [
-            'view' => 'admin::admin.modules.index',
+            'view' => 'admin::admin.' . Module::currentConfig('layout') . '.modules.index',
             'moduleConfig' => Module::currentConfig(null, $module, 'files'),
             'method' => 'view_admin_index',
             // 'jsdelivrs' => Http::get('http://data.jsdelivr.com/v1/stats/packages')->json()
@@ -272,7 +290,7 @@ trait ViewAdminTrait
     function view_admin_modules_insert_item(Request $request, $module, $table)
     {
         $return = [
-            'view' => 'admin::admin.modules.' . substr($table, 0, -1),
+            'view' => 'admin::admin.' . Module::currentConfig('layout') . '.modules.' . substr($table, 0, -1),
             'moduleConfig' => Module::currentConfig(null, $module, 'files'),
             'moduleModels' => Module::currentConfig('entities', $module, true),
             'method' => 'view_admin_insert_item',
@@ -293,13 +311,13 @@ trait ViewAdminTrait
             return redirect("/admin/" . $module . "/" . $table . '/' . $id);
         }
 
-        return self::view($return['view'], $return);
+        return $this->view($return['view'], $return);
     }
     // 通用模块数据详情视图
     function view_admin_modules_select_item(Request $request, $module, $table, $id)
     {
         $return = [
-            'view' => 'admin::admin.modules.' . substr($table, 0, -1),
+            'view' => 'admin::admin.' . Module::currentConfig('layout') . '.modules.' . substr($table, 0, -1),
             'moduleModels' => Module::currentConfig('entities', $module, 'files'),
             'method' => 'view_admin_select_item',
         ];
@@ -315,14 +333,14 @@ trait ViewAdminTrait
             $return['ModuleTableDetail']->fill($request->input());
             $return['ModuleTableDetail']->save();
         }
-        return self::view($return['view'], $return);
+        return $this->view($return['view'], $return);
     }
     // 通用模块数据查询视图
     function view_admin_modules_select_list(Request $request, $module, $table)
     {
 
         $return = [
-            'view' => 'admin::admin.modules.' . $table,
+            'view' => 'admin::admin.' . Module::currentConfig('layout') . '.modules.' . $table,
             'moduleModels' => Module::currentConfig('entities', $module, 'files'),
         ];
         foreach ($return['moduleModels'] as $entity) {
@@ -334,7 +352,7 @@ trait ViewAdminTrait
         // var_dump($return);
         if (empty($return['moduleEntity'])) abort(404);
         $return['moduleTablePaginator'] = $return['moduleEntity']::paginate(15);
-        return self::view($return['view'], $return);
+        return $this->view($return['view'], $return);
     }
 
     // TODO:通用模块参数配置视图
@@ -344,7 +362,7 @@ trait ViewAdminTrait
         $return = [
             // 'prefix' => '',
             // 'files' => app('files')->allFiles('modules\\' . Module::currentConfig('name', $module)),
-            'view' => 'admin::admin.system.modules.config',
+            'view' => 'admin::admin.' . Module::currentConfig('layout') . '.system.modules.config',
             'moduleConfig' => Module::currentConfig(null, $module, 'files'),
             'structure' => [],
         ];
@@ -422,7 +440,7 @@ trait ViewAdminTrait
             $return['alert'] = ['type' => 'error', 'message' => $e->getMessage()];
         }
         // var_dump($return);*
-        return self::view($return['view'], $return);
+        return $this->view($return['view'], $return);
     }
 
     function view_admin_system_artisan(Request $request)
@@ -430,20 +448,20 @@ trait ViewAdminTrait
         Artisan::call('list');
         $return = [
             '$request' => $request->all(),
-            'view' => 'admin::admin.system.artisan',
+            'view' => 'admin::admin.' . Module::currentConfig('layout') . '.system.artisan',
             'commands' => Artisan::output(),
         ];
         // explode("\n", Artisan::output())
         // var_dump($return);
-        return self::view($return['view'], $return);
+        return $this->view($return['view'], $return);
     }
 
     public function view_admin_system_modules(Request $request)
     {
         $return = [
-            'view' => 'admin::admin.system.modules.index',
+            'view' => 'admin::admin.' . Module::currentConfig('layout') . '.system.modules.index',
             'modules' => FacadesModule::all(),
         ];
-        return self::view($return['view'], $return);
+        return $this->view($return['view'], $return);
     }
 }

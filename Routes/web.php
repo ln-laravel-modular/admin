@@ -23,17 +23,9 @@ use App\Support\Module;
 // var_dump(Module::currentConfig('name'));
 Route::prefix(Module::currentConfig('web.prefix'))->group(function () {
     Route::get('/', 'AdminController@view_index');
-    Route::post('/', function (Request $request) {
-        // $user = new User(['name' => 'guest', 'password' => 'guest', 'email' => 'guest@guest']);
-        // Auth::login($user, true);
-        return redirect('/admin');
-    });
-    Route::get('/index2', 'AdminController@view_index2');
-    Route::get('/index3', 'AdminController@view_index3');
-    Route::get('/register', 'AdminController@view_register');
-    Route::get('/login', 'AdminController@view_login');
-
-    Route::get('/forget-password', 'AdminController@view_forget_password');
+    Route::match(['get', 'post'], '/register', 'AdminController@view_register');
+    Route::match(['get', 'post'], '/login', 'AdminController@view_login');
+    Route::match(['get', 'post'], '/forgot-password', 'AdminController@view_forgot_password');
     Route::get('/config', 'AdminController@view_config');
     Route::prefix('system')->group(function () {
         Route::match(['get', 'post'], '/artisan', 'AdminController@view_admin_system_artisan');
