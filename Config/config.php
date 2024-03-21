@@ -9,7 +9,7 @@ return array(
     'md5' => '',
     'component' => NULL,
     'ui' => 'adminlte',
-    'layout' => 'adminlte',
+    'layout' => 'master',
     'theme' => 'master',
     'web' =>
     array(
