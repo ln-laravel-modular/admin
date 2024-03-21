@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @push('styles')
-  <x-styles :props="[['modules/admin/public/adminlte/css/adminlte.min.css']]"></x-styles>
+  <x-styles :props="[['modules/Admin/Public/adminlte/css/adminlte.min.css']]"></x-styles>
 @endpush
 
 @section('main')
@@ -43,5 +43,5 @@
 @endsection
 
 @push('scripts')
-  <x-scripts :props="[['modules/admin/public/adminlte/js/adminlte.min']]"></x-scripts>
+  <x-scripts :props="[['modules/Admin/Public/adminlte/js/adminlte.min']]"></x-scripts>
 @endpush
