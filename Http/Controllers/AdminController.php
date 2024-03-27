@@ -109,7 +109,7 @@ class AdminController extends \App\Http\Controllers\Controller
             // 重置激活状态
             $item['active'] = false;
             $item['index'] = isset($menu['index']) ? ($menu['index'] . '-' . $index) : "$index";
-            $item['path'] = isset($parent['path']) ? ($parent['path'] . $item['path']) :  $item['path'];
+            $item['path'] = isset($parent['path']) ? ($parent['path'] . $item['path']) : $item['path'];
             // 精准匹配
             if ($path == $item['path']) {
                 $item['active'] = true;
@@ -131,7 +131,7 @@ class AdminController extends \App\Http\Controllers\Controller
                 [$item['children'], $activeTree] = self::getSidebarMenu($item['children'], $item);
                 // 根据子元素修改父元素
                 $hasActiveChild = sizeof(array_filter($item['children'], function ($subItem) {
-                    return !empty($subItem['active']);
+                    return !empty ($subItem['active']);
                 })) > 0;
                 if ($hasActiveChild) {
                     $item['active'] = true;
@@ -197,7 +197,8 @@ trait ViewTrait
     {
         if ($request->method() == 'POST') {
             $this->api_login($request);
-            if (Auth::check()) return redirect("/admin");
+            if (Auth::check())
+                return redirect("/admin");
         }
         $return = [
             'view' => "login"
@@ -214,7 +215,7 @@ trait ViewTrait
     function view_index(Request $request)
     {
 
-        if (!Auth::check()) return redirect("/admin/login");
+        // if (!Auth::check()) return redirect("/admin/login");
         $return = [
             'view' => "index"
         ];
@@ -302,7 +303,8 @@ trait ViewAdminTrait
                 break;
             }
         }
-        if (empty($return['moduleEntity'])) abort(404);
+        if (empty($return['moduleEntity']))
+            abort(404);
         $return['ModuleTableDetail'] = new $return['moduleEntity'];
         if ($request->method() == 'POST') {
             $return['ModuleTableDetail']->fill($request->input());
@@ -327,8 +329,9 @@ trait ViewAdminTrait
                 break;
             }
         }
-        if (empty($return['moduleEntity'])) abort(404);
-        $return['ModuleTableDetail'] =  $return['entity']::find($id);
+        if (empty($return['moduleEntity']))
+            abort(404);
+        $return['ModuleTableDetail'] = $return['entity']::find($id);
         if ($request->method() == 'POST') {
             $return['ModuleTableDetail']->fill($request->input());
             $return['ModuleTableDetail']->save();
@@ -350,7 +353,8 @@ trait ViewAdminTrait
             }
         }
         // var_dump($return);
-        if (empty($return['moduleEntity'])) abort(404);
+        if (empty($return['moduleEntity']))
+            abort(404);
         $return['moduleTablePaginator'] = $return['moduleEntity']::paginate(15);
         return $this->view($return['view'], $return);
     }
@@ -358,7 +362,8 @@ trait ViewAdminTrait
     // TODO:通用模块参数配置视图
     function view_admin_system_modules_config(Request $request, $module = null)
     {
-        if (empty($module)) $module = Module::current();
+        if (empty($module))
+            $module = Module::current();
         $return = [
             // 'prefix' => '',
             // 'files' => app('files')->allFiles('modules\\' . Module::currentConfig('name', $module)),
@@ -463,5 +468,22 @@ trait ViewAdminTrait
             'modules' => FacadesModule::all(),
         ];
         return $this->view($return['view'], $return);
+    }
+
+    public function view_system_helpers(Request $request)
+    {
+        $return = [
+            'view' => 'system.helpers',
+            'declaredClasses' => array_slice(get_declared_classes(), 0, 10),
+        ];
+        return $this->view($return);
+    }
+    public function view_system_helpers_class(Request $request, $class)
+    {
+        $return = [
+            'view' => 'system.helpers',
+            'classMethods' => get_class_methods($class),
+        ];
+        return $this->view($return);
     }
 }

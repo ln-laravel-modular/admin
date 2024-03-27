@@ -65,10 +65,23 @@ return array(
                 'title' => '用户管理',
                 'icon' => 'fas fa-users',
                 'slug' => '',
+                'order' => 9223372036854775805,
                 'children' =>
                 array(),
             ),
             2 =>
+            array(
+                'path' => '/collection',
+                'title' => '藏品合集',
+                'icon' => 'fas fa-users',
+                'slug' => '',
+                'order' => 9223372036854775806,
+                'method' => 'view_library',
+                'children' =>
+
+                array(),
+            ),
+            3 =>
             array(
                 'path' => '/system',
                 'title' => '系统管理',
@@ -118,9 +131,17 @@ return array(
                             ),
                         ),
                     ),
+                    5 =>
+                    array(
+                        'path' => '/helpers',
+                        'title' => '辅助参考',
+                        'function' => "view_system_helpers",
+                        'children' =>
+                        array(),
+                    ),
                 ),
             ),
-            3 =>
+            4 =>
             array(
                 'path' => '',
                 'title' => 'Dashboard',

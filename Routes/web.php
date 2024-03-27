@@ -35,6 +35,8 @@ Route::prefix(Module::currentConfig('web.prefix'))->group(function () {
             ->where(['module' => '(' . implode('|', array_filter(array_values(Module::allConfig('web.prefix')), function ($value) {
                 return $value !== strtolower(Module::current());
             })) . ')']);
+        Route::match(['get'], '/helpers', 'AdminController@view_system_helpers');
+        Route::match(['get'], '/helpers/{class}', 'AdminController@view_system_helpers_class');
     });
 
     /**
